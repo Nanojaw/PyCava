@@ -1,4 +1,4 @@
-package pycava.lel.lewqae;
+package pycava;
 
 public class bridge {
     public static native void Log(String message);

@@ -1,12 +1,14 @@
 #pragma once
+
+#include <string>
+
 namespace pycava
 {
-    namespace lel
+    class bridge
     {
-        namespace lewqae
-        {
-            class bridge
-            {
-                void Log(std::wstring message);
+        void Log(std::wstring message);
 
-                void Hello();
+        void Hello();
+
+    };
+}

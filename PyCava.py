@@ -2,9 +2,13 @@
 
 import subprocess
 import os
+import shutil
 import sys
 import extractStuff
 import generator
+
+if (os.path.exists("Cava")):
+    shutil.rmtree("Cava")
 
 # Getting filename
 filename = "bridge"
