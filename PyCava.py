@@ -1,0 +1,1 @@
+# Tool for generating JNI code
