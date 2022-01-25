@@ -25,6 +25,16 @@ def getMethods(filename):
 
     for i in range(len(methodLines)):
         methodLines[i] = methodLines[i][25:]
+        firstParenthesis = methodLines[i].find("(")
+        secondParenthesis = methodLines[i].find(")")
+
+        if (firstParenthesis + 1 != secondParenthesis):
+            methodLines[i] = methodLines[i].replace("String", "std::wstring")
+
+            methodLines[i] = methodLines[i].replace("byte", "char")
+            methodLines[i] = methodLines[i].replace("long", "long long")
+            methodLines[i] = methodLines[i].replace("char", "wchar_t")
+            methodLines[i] = methodLines[i].replace("bolean", "bool")
 
     return methodLines
 

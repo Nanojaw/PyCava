@@ -15,17 +15,6 @@ def writeToFile(filename, jC):
     indentation += "    "
 
     for method in jC.methods:
-        firstParenthesis = method.find("(")
-        secondParenthesis = method.find(")")
-
-        if (firstParenthesis + 1 != secondParenthesis):
-            method = method.replace("String", "std::wstring")
-
-            method = method.replace("byte", "char")
-            method = method.replace("long", "long long")
-            method = method.replace("char", "wchar_t")
-            method = method.replace("bolean", "bool")
-
         linesString += indentation + method + "\n"
 
     indentation = indentation[:len(indentation) -4]

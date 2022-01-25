@@ -3,9 +3,10 @@
 import subprocess
 import os
 import shutil
-import sys
+
 import extractStuff
-import generator
+import headerGenerator
+import cppGenerator
 
 if (os.path.exists("Cava")):
     shutil.rmtree("Cava")
@@ -31,4 +32,5 @@ headerFilename = (next(os.walk(os.path.realpath(os.path.curdir)), (None, None, [
 
 javaContents = extractStuff.javaContents(javaFilename)
 
-generator.writeToFile(filename, javaContents)
+headerGenerator.writeToFile(filename, javaContents)
+cppGenerator.generate(filename, headerFilename, javaContents)
