@@ -1,3 +1,5 @@
+import extractStuff
+
 def generate (filename, hFilename, content):
     lineString = f"#include <string>\n#include <{filename}.h>\n#include <{hFilename}>\n"
 
@@ -11,6 +13,9 @@ def generate (filename, hFilename, content):
         defFunc += content.classs + "_" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
         # Adding parameters to definition
+
+        params = extractStuff.getMethodParams(content.methods[i])
+
         defFunc += " (JNIEnv* env, jclass object"
         
         
@@ -31,4 +36,4 @@ def generate (filename, hFilename, content):
         "    return " + cppFunc + "}\n"
         )
 
-    print(lineString)
+    #print(lineString)
