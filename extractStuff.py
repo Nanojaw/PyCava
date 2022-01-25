@@ -30,11 +30,10 @@ def getMethods(filename):
 
         if (firstParenthesis + 1 != secondParenthesis):
             methodLines[i] = methodLines[i].replace("String", "std::wstring")
-
+            methodLines[i] = methodLines[i].replace("char", "wchar_t")
             methodLines[i] = methodLines[i].replace("byte", "char")
             methodLines[i] = methodLines[i].replace("long", "long long")
-            methodLines[i] = methodLines[i].replace("char", "wchar_t")
-            methodLines[i] = methodLines[i].replace("bolean", "bool")
+            methodLines[i] = methodLines[i].replace("boolean", "bool")
 
     return methodLines
 
@@ -49,6 +48,7 @@ def getMethodParams(method):
     paramsArray = paramsString.split(',')
 
     for i in range(len(paramsArray)):
+        paramsArray[i] = paramsArray[i].strip()
         paramsArray[i] = paramsArray[i][: paramsArray[i].find(' ')]
 
     return paramsArray
