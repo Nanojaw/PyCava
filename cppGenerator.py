@@ -14,7 +14,6 @@ def generate (filename, hFilename, content):
 
         # Adding parameters to definition
         params = extractStuff.getMethodParams(content.methods[i])
-        print(params)
 
         defFunc += " (JNIEnv* env, jclass object"
         for j in range(len(params)):
@@ -54,9 +53,8 @@ def generate (filename, hFilename, content):
                 reference += "    const wchar_t* r" + str(j) + " = (*env)->GetStringChars(env, v" + str(j) + ", nullptr);\n"
                 cppFunc += ", std::wstring(r" + str(j) + ")"
                 release += "    (*env)->ReleaseStringChars(env, v" + str(j) + ", r" + str(j) + ");\n"
-        cppFunc += ")\n"
-        print(cppFunc.find(","))
-        cppFunc = cppFunc[:cppFunc.find(",")] + cppFunc[cppFunc.find(",") + 2:]
+        cppFunc += ");\n"
+        if cppFunc.find(",") != -1: cppFunc = cppFunc[:cppFunc.find(",")] + cppFunc[cppFunc.find(",") + 2:]
 
         lineString += (
         "\n" + 
