@@ -43,7 +43,7 @@ def generate (filename, hFilename, content):
         cppFunc += "("
         for j in range(len(params)):
             if params[j] == "char" : cppFunc += ", (char)v" + str(j)
-            elif params[j] == "short" : cppFunc += ",  (short)v" + str(j)
+            elif params[j] == "short" : cppFunc += ", (short)v" + str(j)
             elif params[j] == "int": cppFunc += ", (int)v" + str(j)
             elif params[j] == "long": cppFunc += ", (long long)v" + str(j)
             elif params[j] == "float": cppFunc += ", (float)v" + str(j)
@@ -55,6 +55,8 @@ def generate (filename, hFilename, content):
                 cppFunc += ", std::wstring(r" + str(j) + ")"
                 release += "    (*env)->ReleaseStringChars(env, v" + str(j) + ", r" + str(j) + ");\n"
         cppFunc += ")\n"
+        print(cppFunc.find(","))
+        cppFunc = cppFunc[:cppFunc.find(",")] + cppFunc[cppFunc.find(",") + 2:]
 
         lineString += (
         "\n" + 
