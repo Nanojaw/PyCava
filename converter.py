@@ -45,12 +45,16 @@ def JavaMethodToCpp(method: str) -> str:
     method = method.replace('(', ' ')
     method = method.strip(',);')
     split = method.split(' ')
+
     i = 0
+    j = 0
     while (i < len(split)):
         try: 
-            split[i] = JavaToCpp[split[i]]
+            
+            JavaToCpp[split[i]] #TODO make this line edit method
         except KeyError: 
             split.pop(i)
         i+=1
+        j += len(split[i])
 
     return "".join(split)
