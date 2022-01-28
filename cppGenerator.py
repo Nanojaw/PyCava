@@ -1,6 +1,7 @@
 import extractStuff
+import converter
 
-def generate (filename, hFilename, content):
+def generate (filename: str, hFilename: str, content):
     lineString = f"#include <string>\n#include <{filename}.h>\n#include <{hFilename}>\n"
 
     #  Adding all of the functions to be wrapped
@@ -12,20 +13,18 @@ def generate (filename, hFilename, content):
             defFunc += pack + "_"
         defFunc += content.classs + "_" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
+        hFile = open(hFilename)
+        hLines = hFile.readlines()
+        defFunc = defFunc[defFunc.find(" "):]
         # Adding parameters to definition
-        params = extractStuff.getMethodParams(content.methods[i])
+        javaParams = extractStuff.getMethodParams(content.methods[i])
+        params = []
+        for param in javaParams:
+            params.append(converter.JavaToCpp[param])
 
-        defFunc += " (JNIEnv* env, jclass object"
+        defFunc += " (JNIEnv* env, jobject obj"
         for j in range(len(params)):
-            if params[j] == "char" : defFunc += ", jbyte v" + str(j)
-            elif params[j] == "short" : defFunc += ",  jshort v" + str(j)
-            elif params[j] == "int": defFunc += ", jint v" + str(j)
-            elif params[j] == "long": defFunc += ", jlong v" + str(j)
-            elif params[j] == "float": defFunc += ", jfloat v" + str(j)
-            elif params[j] == "double": defFunc += ", jdouble v" + str(j)
-            elif params[j] == "wchar_t": defFunc += ", jchar v" + str(j)
-            elif params[j] == "bool": defFunc += ", jboolean v" + str(j)
-            elif params[j] == "std::wstring": defFunc += ", jstring v" + str(j)
+            defFunc += ", " + converter.CppToJNI[params[j]] + " v" + str(j)
         defFunc += ")\n"
 
         # Getting cpp function

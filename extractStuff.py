@@ -1,4 +1,7 @@
-def getPackages(filename):
+import converter
+import re
+
+def getPackages(filename: str) -> list[str]:
         file = open(f"../{filename}")
 
         packageLine = file.readline()
@@ -7,7 +10,7 @@ def getPackages(filename):
 
         return packages
 
-def getClass(filename):
+def getClass(filename: str) -> str:
     file = open(f"../{filename}")
 
     lines = file.readlines()
@@ -16,7 +19,7 @@ def getClass(filename):
 
     return classs[13: len(classs) - 3]
 
-def getMethods(filename):
+def getMethods(filename: str) -> list[str]:
     file = open(f"../{filename}")
 
     lines = file.readlines()
@@ -29,15 +32,11 @@ def getMethods(filename):
         secondParenthesis = methodLines[i].find(")")
 
         if (firstParenthesis + 1 != secondParenthesis):
-            methodLines[i] = methodLines[i].replace("String", "std::wstring")
-            methodLines[i] = methodLines[i].replace("char", "wchar_t")
-            methodLines[i] = methodLines[i].replace("byte", "char")
-            methodLines[i] = methodLines[i].replace("long", "long long")
-            methodLines[i] = methodLines[i].replace("boolean", "bool")
+            methodLines[i] = converter.JavaMethodToCpp(methodLines[i])
 
     return methodLines
 
-def getMethodParams(method):
+def getMethodParams(method: str) -> list[str]:
     firstParenthesis = method.find('(')
     secondParenthesis = method.find(')')
 
@@ -54,6 +53,9 @@ def getMethodParams(method):
     return paramsArray
 
 class javaContents:
+    packages: list[str]
+    classs: str
+    methods: list[str]
     def __init__(self, filename):
         self.packages = getPackages(filename)
 

@@ -1,4 +1,4 @@
-def writeToFile(filename, jC):
+def writeToFile(filename: str, jC):
     realHeader = open(f"{filename}.h", "w")
 
     linesString = "#pragma once\n\n#include <string>\n\n"
