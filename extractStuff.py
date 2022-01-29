@@ -2,7 +2,7 @@ import converter
 import re
 
 def getPackages(filename: str) -> list[str]:
-        file = open(f"../{filename}")
+        file = open(f"{filename}")
 
         packageLine = file.readline()
 
@@ -11,7 +11,7 @@ def getPackages(filename: str) -> list[str]:
         return packages
 
 def getClass(filename: str) -> str:
-    file = open(f"../{filename}")
+    file = open(f"{filename}")
 
     lines = file.readlines()
 
@@ -20,7 +20,7 @@ def getClass(filename: str) -> str:
     return classs[13: len(classs) - 3]
 
 def getMethods(filename: str) -> list[str]:
-    file = open(f"../{filename}")
+    file = open(f"{filename}")
 
     lines = file.readlines()
 

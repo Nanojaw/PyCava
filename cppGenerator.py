@@ -1,7 +1,6 @@
+from gettext import find
 import extractStuff
 import converter
-
-import os
 
 def generateWrapper(filename: str, hFilename: str, content):
     lineString = f"#include <string>\n#include <{filename}.h>\n#include <{hFilename}>\n"
@@ -15,8 +14,6 @@ def generateWrapper(filename: str, hFilename: str, content):
             defFunc += pack + "_"
         defFunc += content.classs + "_" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
-        hFile = open(hFilename)
-        hLines = hFile.readlines()
         defFunc = defFunc[defFunc.find(" "):]
         # Adding parameters to definition
         params = extractStuff.getMethodParams(content.methods[i])
@@ -29,8 +26,8 @@ def generateWrapper(filename: str, hFilename: str, content):
         # Getting cpp function
         cppFunc = ""
         for pack in content.packages:
-            cppFunc += pack + "."
-        cppFunc += content.classs + "." + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
+            cppFunc += pack + "::"
+        cppFunc += content.classs + "::" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
         # Adding parameters to cpp function
 
@@ -43,6 +40,10 @@ def generateWrapper(filename: str, hFilename: str, content):
                 reference += f"    const wchar_t* r{str(j)} = (*env)->GetStringChars(env, v{str(j)}, nullptr);\n"
                 cppFunc += f", std::wstring(r{str(j)})"
                 release += f"    (*env)->ReleaseStringChars(env, v{str(j)}, r{str(j)});\n"
+            if params[j].startswith('std::vector'):
+                reference += f"    const {converter.CppToJava[params[j]].strip('[]')}* r{str(j)} = (*env)->Get{converter.CppToJava[params[j]].strip('[]').capitalize()}ArrayElements(env, v{str(j)}, 0);\n"
+                cppFunc += f", std::vector(r{str(j)}, r{str(j)} + (*env)->GetArrayLength(env, v{str(j)}))"
+                release += f"    (*env)->Release{converter.CppToJava[params[j]].strip('[]').capitalize()}ArrayElements(env, v{str(j)}, r{str(j)}, 0);\n"
             else:
                 cppFunc += f", ({params[j]}) v{str(j)}"
         cppFunc += ");\n"
@@ -59,9 +60,22 @@ def generateWrapper(filename: str, hFilename: str, content):
         "}\n"
         )
 
-    file = open(hFilename +  ".cpp", 'w')
+    file = open(f"Cava/{hFilename[:hFilename.find('.')]}.cpp", 'w')
     file.write(lineString)
     file.close()
 
 def generateCppFile(filename: str, content):
-    cppFile = open(f"../{filename}.cpp", 'w')
+    cppFile = open(f"{filename}.cpp", 'w')
+
+    file = f"#include <Cava/{filename}.h>\n\n"
+
+    for method in content.methods:
+        namespace = " "
+        for package in content.packages:
+            namespace += package + "::"
+        method = method[:method.find(' ')] + namespace + content.classs + "::" + method[method.find(' ') + 1:]
+        method = method.replace(';', '')
+        method += "{\n    \n}\n"
+        file += method
+    
+    cppFile.write(file)

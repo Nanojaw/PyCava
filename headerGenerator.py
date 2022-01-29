@@ -1,21 +1,22 @@
 def writeToFile(filename: str, jC):
-    realHeader = open(f"{filename}.h", "w")
+    realHeader = open(f"Cava/{filename}.h", "w")
 
-    linesString = "#pragma once\n\n#include <string>\n\n"
+    linesString = "#pragma once\n\n#include <string>\n#include <vector>\n\n"
 
     indentation = ""
 
     for package in jC.packages:
-        linesString += indentation + "namespace " + package + "\n" + indentation + "{\n"
+        linesString += f"{indentation}namespace {package}\n{indentation}" + "{\n"
         indentation += "    "
 
-    linesString += indentation + "class " + jC.classs + "\n"
-    linesString += indentation + "{\n"
+    linesString += indentation + f"class {jC.classs}\n"
+    linesString += indentation + "{\n" 
+    linesString += indentation + "public:\n"
 
     indentation += "    "
 
     for method in jC.methods:
-        linesString += indentation + method + "\n"
+        linesString += f"{indentation}static {method}\n"
 
     indentation = indentation[:len(indentation) -4]
 
