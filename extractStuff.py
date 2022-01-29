@@ -49,6 +49,7 @@ def getMethodParams(method: str) -> list[str]:
     for i in range(len(paramsArray)):
         paramsArray[i] = paramsArray[i].strip()
         paramsArray[i] = paramsArray[i][: paramsArray[i].find(' ')]
+        if(paramsArray[i] == 'long'): paramsArray[i] = 'long long'
 
     return paramsArray
 

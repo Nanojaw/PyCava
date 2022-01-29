@@ -17,14 +17,11 @@ def generate (filename: str, hFilename: str, content):
         hLines = hFile.readlines()
         defFunc = defFunc[defFunc.find(" "):]
         # Adding parameters to definition
-        javaParams = extractStuff.getMethodParams(content.methods[i])
-        params = []
-        for param in javaParams:
-            params.append(converter.JavaToCpp[param])
+        params = extractStuff.getMethodParams(content.methods[i])
 
         defFunc += " (JNIEnv* env, jobject obj"
         for j in range(len(params)):
-            defFunc += ", " + converter.CppToJNI[params[j]] + " v" + str(j)
+            defFunc += f", {converter.CppToJNI[params[j]]} v{str(j)}"
         defFunc += ")\n"
 
         # Getting cpp function
@@ -40,18 +37,12 @@ def generate (filename: str, hFilename: str, content):
 
         cppFunc += "("
         for j in range(len(params)):
-            if params[j] == "char" : cppFunc += ", (char)v" + str(j)
-            elif params[j] == "short" : cppFunc += ", (short)v" + str(j)
-            elif params[j] == "int": cppFunc += ", (int)v" + str(j)
-            elif params[j] == "long": cppFunc += ", (long long)v" + str(j)
-            elif params[j] == "float": cppFunc += ", (float)v" + str(j)
-            elif params[j] == "double": cppFunc += ", (double)v" + str(j)
-            elif params[j] == "wchar_t": cppFunc += ", (wchar_t)v" + str(j)
-            elif params[j] == "bool": cppFunc += ", (bool)v" + str(j)
-            elif params[j] == "std::wstring": 
-                reference += "    const wchar_t* r" + str(j) + " = (*env)->GetStringChars(env, v" + str(j) + ", nullptr);\n"
-                cppFunc += ", std::wstring(r" + str(j) + ")"
-                release += "    (*env)->ReleaseStringChars(env, v" + str(j) + ", r" + str(j) + ");\n"
+            if params[j] == "std::wstring": 
+                reference += f"    const wchar_t* r{str(j)} = (*env)->GetStringChars(env, v{str(j)}, nullptr);\n"
+                cppFunc += f", std::wstring(r{str(j)})"
+                release += f"    (*env)->ReleaseStringChars(env, v{str(j)}, r{str(j)});\n"
+            else:
+                cppFunc += f", ({params[j]}) v{str(j)}"
         cppFunc += ");\n"
         if cppFunc.find(",") != -1: cppFunc = cppFunc[:cppFunc.find(",")] + cppFunc[cppFunc.find(",") + 2:]
 

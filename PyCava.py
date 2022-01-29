@@ -8,9 +8,6 @@ import extractStuff
 import headerGenerator
 import cppGenerator
 
-if (os.path.exists("Cava")):
-    shutil.rmtree("Cava")
-
 # Getting filename
 filename = "bridge"
 #filename = input("File name: ")
@@ -18,12 +15,15 @@ filename = "bridge"
 #    print("File does not exist")
 #    sys.exit(1)
 
-# Creating Cava folder
-if not os.path.exists("Cava"): 
-    folder = os.mkdir("Cava")
+# Recreating Cava folder
+if (os.path.exists("Cava")):
+    shutil.rmtree("Cava")
+folder = os.mkdir("Cava")
+print("Recreated Cava folder")
 
 # Calling javac with -h flag
 subprocess.call([os.environ.get("JAVA_HOME") + "/bin/javac.exe", "-d", "./Cava", "-h", "./Cava", filename + ".java"])
+print("Called javac with -h flag")
 
 os.chdir("Cava")
 
@@ -31,6 +31,9 @@ javaFilename = "bridge.java"
 headerFilename = (next(os.walk(os.path.realpath(os.path.curdir)), (None, None, []))[2])[0]
 
 javaContents = extractStuff.javaContents(javaFilename)
+print("Extracted contents of .java file")
 
 headerGenerator.writeToFile(filename, javaContents)
+print("Generated header file")
 cppGenerator.generate(filename, headerFilename, javaContents)
+print("Generated cpp file")

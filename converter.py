@@ -1,5 +1,5 @@
 CppToJNI = {
-    'char': "byte",
+    'char': "jbyte",
     'short': "jshort",
     'int': "jint",
     'long long': "jlong",
@@ -42,19 +42,15 @@ JavaToCpp = {
 }
 
 def JavaMethodToCpp(method: str) -> str:
-    method = method.replace('(', ' ')
-    method = method.strip(',);')
+    method = method.replace('(', ' (')
     split = method.split(' ')
 
-    i = 0
-    j = 0
-    while (i < len(split)):
+    for i in range(len(split)):
         try: 
-            
-            JavaToCpp[split[i]] #TODO make this line edit method
-        except KeyError: 
-            split.pop(i)
-        i+=1
-        j += len(split[i])
+            java = split[i].strip(',;()')
+            cpp = JavaToCpp[java]
+            split[i] = split[i][:split[i].find(java)]+ cpp + split[i][split[i].find(java) + len(java):] + " " #TODO make this line edit method
+        except KeyError:
+            pass
 
     return "".join(split)
