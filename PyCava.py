@@ -33,7 +33,14 @@ headerFilename = (next(os.walk(os.path.realpath(os.path.curdir)), (None, None, [
 javaContents = extractStuff.javaContents(javaFilename)
 print("Extracted contents of .java file")
 
+cppGenerator.generateWrapper(filename, headerFilename, javaContents)
+print("Generated wrapper file")
+
 headerGenerator.writeToFile(filename, javaContents)
 print("Generated header file")
-cppGenerator.generate(filename, headerFilename, javaContents)
-print("Generated cpp file")
+
+
+# Generate a c++ file if it doesn't exist
+if not os.path.exists(f"../{filename}.cpp"):
+    cppGenerator.generateCppFile(filename, javaContents)
+    print("Generated c++ file")

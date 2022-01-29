@@ -1,7 +1,9 @@
 import extractStuff
 import converter
 
-def generate (filename: str, hFilename: str, content):
+import os
+
+def generateWrapper(filename: str, hFilename: str, content):
     lineString = f"#include <string>\n#include <{filename}.h>\n#include <{hFilename}>\n"
 
     #  Adding all of the functions to be wrapped
@@ -57,6 +59,9 @@ def generate (filename: str, hFilename: str, content):
         "}\n"
         )
 
-    file = open(filename +  ".cpp", 'w')
+    file = open(hFilename +  ".cpp", 'w')
     file.write(lineString)
     file.close()
+
+def generateCppFile(filename: str, content):
+    cppFile = open(f"../{filename}.cpp", 'w')
