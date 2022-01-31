@@ -1,4 +1,3 @@
-from gettext import find
 import extractStuff
 import converter
 
@@ -9,12 +8,11 @@ def generateWrapper(filename: str, hFilename: str, content):
     for i in range(len(content.methods)):
 
         # Adding definition to functions in header file
-        defFunc = content.methods[i][:content.methods[i].find(' ') + 1] + "Java_"
+        defFunc = converter.CppToJNI[content.methods[i][:content.methods[i].find(' ')]] + " Java_"
         for pack in content.packages:
             defFunc += pack + "_"
         defFunc += content.classs + "_" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
-        defFunc = defFunc[defFunc.find(" "):]
         # Adding parameters to definition
         params = extractStuff.getMethodParams(content.methods[i])
 
@@ -23,6 +21,7 @@ def generateWrapper(filename: str, hFilename: str, content):
             defFunc += f", {converter.CppToJNI[params[j]]} v{str(j)}"
         defFunc += ")\n"
 
+
         # Getting cpp function
         cppFunc = ""
         for pack in content.packages:
@@ -30,7 +29,6 @@ def generateWrapper(filename: str, hFilename: str, content):
         cppFunc += content.classs + "::" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
 
         # Adding parameters to cpp function
-
         reference = "" # Reference and release is for handling reference objects that require cleanup
         release = ""
 
@@ -49,6 +47,21 @@ def generateWrapper(filename: str, hFilename: str, content):
         cppFunc += ");\n"
         if cppFunc.find(",") != -1: cppFunc = cppFunc[:cppFunc.find(",")] + cppFunc[cppFunc.find(",") + 2:]
 
+
+        # Handling returning
+        returntype = content.methods[i][:content.methods[i].find(' ')]
+
+        if returntype == 'std::wstring':
+            result = ("    auto string = (*env)->NewString(env, &result[0], result.size());\n"
+                      "    return string;\n")
+        elif returntype.startswith('std::vector'):
+            result = (f"    {converter.CppToJNI[returntype]} array = (*env)->New{converter.CppToJava[returntype].strip('[]').capitalize()}Array(env, result.size());\n"
+                      f"    (*env)->Set{converter.CppToJava[returntype].strip('[]').capitalize()}ArrayRegion(env, array, 0, result.size(), &result[0]);\n"
+                      f"    return array;\n")
+        else:
+            result = f"    return ({converter.CppToJNI[returntype]})result;\n"
+
+
         lineString += (
         "\n" + 
         defFunc + 
@@ -56,7 +69,7 @@ def generateWrapper(filename: str, hFilename: str, content):
         reference +
         "    auto result = " + cppFunc +
         release +
-        "    return result;\n"
+        result +
         "}\n"
         )
 

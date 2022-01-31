@@ -2,6 +2,7 @@ from operator import contains
 
 
 CppToJNI = {
+    'void': 'void',
     'char': 'jbyte',
     'short': 'jshort',
     'int': 'jint',

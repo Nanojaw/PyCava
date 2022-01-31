@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     pycava_bridge
  * Method:    Log
- * Signature: ([BS[IJFDCZLjava/lang/String;)I
+ * Signature: ([BS[IJFDCZLjava/lang/String;)[I
  */
-JNIEXPORT jint JNICALL Java_pycava_bridge_Log
+JNIEXPORT jintArray JNICALL Java_pycava_bridge_Log
   (JNIEnv *, jclass, jbyteArray, jshort, jintArray, jlong, jfloat, jdouble, jchar, jboolean, jstring);
 
 /*

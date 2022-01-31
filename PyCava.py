@@ -12,15 +12,14 @@ import cppGenerator
 # Getting filename
 filename = input("File name: ")
 filename = filename[:filename.find('.')]
-if not os.path.exists(filename + ".java"):
+if not os.path.isfile(f"./{filename}.java"):
     print("File does not exist")
     sys.exit(1)
 
-
 # Recreating Cava folder
-if (os.path.exists("Cava")):
-    shutil.rmtree("Cava")
-folder = os.mkdir("Cava")
+if (os.path.isdir('./Cava')):
+    shutil.rmtree('Cava')
+folder = os.mkdir('Cava')
 print("Recreated Cava folder")
 
 # Calling javac with -h flag
@@ -38,7 +37,6 @@ print("Generated wrapper file")
 
 headerGenerator.writeToFile(filename, javaContents)
 print("Generated header file")
-
 
 # Generate a cpp file if it doesn't exist
 if not os.path.exists(f"{filename}.cpp"):

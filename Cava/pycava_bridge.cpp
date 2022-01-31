@@ -2,7 +2,7 @@
 #include <bridge.h>
 #include <pycava_bridge.h>
 
- Java_pycava_bridge_Log (JNIEnv* env, jobject obj, jcharArray v0, jshort v1, jintArray v2, jlong v3, jfloat v4, jdouble v5, jchar v6, jboolean v7, jstring v8)
+jintArray Java_pycava_bridge_Log (JNIEnv* env, jobject obj, jcharArray v0, jshort v1, jintArray v2, jlong v3, jfloat v4, jdouble v5, jchar v6, jboolean v7, jstring v8)
 {
     const byte* r0 = (*env)->GetByteArrayElements(env, v0, 0);
     const int* r2 = (*env)->GetIntArrayElements(env, v2, 0);
@@ -11,11 +11,13 @@
     (*env)->ReleaseByteArrayElements(env, v0, r0, 0);
     (*env)->ReleaseIntArrayElements(env, v2, r2, 0);
     (*env)->ReleaseStringChars(env, v8, r8);
-    return result;
+    jintArrayArray array = (*env)->NewIntArray(env, result.size());
+    (*env)->SetIntArrayRegion(env, array, 0, result.size(), &result[0]);
+    return array;
 }
 
- Java_pycava_bridge_Hello (JNIEnv* env, jobject obj)
+void Java_pycava_bridge_Hello (JNIEnv* env, jobject obj)
 {
     auto result = pycava::bridge::Hello();
-    return result;
+    return (void)result;
 }
