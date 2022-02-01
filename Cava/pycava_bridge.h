@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ([BS[IJFDCZLjava/lang/String;)[I
  */
 JNIEXPORT jintArray JNICALL Java_pycava_bridge_Log
-  (JNIEnv *, jclass, jbyteArray, jshort, jintArray, jlong, jfloat, jdouble, jchar, jboolean, jstring);
+  (JNIEnv *, jobject, jbyteArray, jshort, jintArray, jlong, jfloat, jdouble, jchar, jboolean, jstring);
 
 /*
  * Class:     pycava_bridge
@@ -21,7 +21,7 @@ JNIEXPORT jintArray JNICALL Java_pycava_bridge_Log
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_pycava_bridge_Hello
-  (JNIEnv *, jclass);
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

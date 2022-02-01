@@ -1,5 +1,4 @@
 import converter
-import re
 
 def getPackages(filename: str) -> list[str]:
         file = open(f"{filename}")
@@ -24,10 +23,10 @@ def getMethods(filename: str) -> list[str]:
 
     lines = file.readlines()
 
-    methodLines = list(filter(lambda x: "public static native" in x, lines))
+    methodLines = list(filter(lambda x: "public native" in x, lines))
 
     for i in range(len(methodLines)):
-        methodLines[i] = methodLines[i][25:]
+        methodLines[i] = methodLines[i][len("    public native "):]
         firstParenthesis = methodLines[i].find("(")
         secondParenthesis = methodLines[i].find(")")
 

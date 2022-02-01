@@ -10,8 +10,7 @@ import headerGenerator
 import cppGenerator
 
 # Getting filename
-filename = input("File name: ")
-filename = filename[:filename.find('.')]
+filename = sys.argv[1]
 if not os.path.isfile(f"./{filename}.java"):
     print("File does not exist")
     sys.exit(1)

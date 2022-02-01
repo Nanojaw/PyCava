@@ -2,13 +2,13 @@ import extractStuff
 import converter
 
 def generateWrapper(filename: str, hFilename: str, content):
-    lineString = f"#include <string>\n#include <{filename}.h>\n#include <{hFilename}>\n"
+    lineString = f"#include <string>\n#include \"{filename}.h\"\n#include \"{hFilename}\"\n"
 
     #  Adding all of the functions to be wrapped
     for i in range(len(content.methods)):
 
         # Adding definition to functions in header file
-        defFunc = converter.CppToJNI[content.methods[i][:content.methods[i].find(' ')]] + " Java_"
+        defFunc = f"JNIEXPORT {converter.CppToJNI[content.methods[i][:content.methods[i].find(' ')]]} JNICALL Java_"
         for pack in content.packages:
             defFunc += pack + "_"
         defFunc += content.classs + "_" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
@@ -23,7 +23,7 @@ def generateWrapper(filename: str, hFilename: str, content):
 
 
         # Getting cpp function
-        cppFunc = ""
+        cppFunc = "    auto result = "
         for pack in content.packages:
             cppFunc += pack + "::"
         cppFunc += content.classs + "::" + content.methods[i][content.methods[i].find(" ") + 1:content.methods[i].find("(")]
@@ -38,7 +38,7 @@ def generateWrapper(filename: str, hFilename: str, content):
                 reference += f"    const wchar_t* r{str(j)} = (*env)->GetStringChars(env, v{str(j)}, nullptr);\n"
                 cppFunc += f", std::wstring(r{str(j)})"
                 release += f"    (*env)->ReleaseStringChars(env, v{str(j)}, r{str(j)});\n"
-            if params[j].startswith('std::vector'):
+            elif params[j].startswith('std::vector'):
                 reference += f"    const {converter.CppToJava[params[j]].strip('[]')}* r{str(j)} = (*env)->Get{converter.CppToJava[params[j]].strip('[]').capitalize()}ArrayElements(env, v{str(j)}, 0);\n"
                 cppFunc += f", std::vector(r{str(j)}, r{str(j)} + (*env)->GetArrayLength(env, v{str(j)}))"
                 release += f"    (*env)->Release{converter.CppToJava[params[j]].strip('[]').capitalize()}ArrayElements(env, v{str(j)}, r{str(j)}, 0);\n"
@@ -51,7 +51,10 @@ def generateWrapper(filename: str, hFilename: str, content):
         # Handling returning
         returntype = content.methods[i][:content.methods[i].find(' ')]
 
-        if returntype == 'std::wstring':
+        if returntype == 'void':
+            result = ""
+            cppFunc = "    " + cppFunc[len("    auto result = "):]
+        elif returntype == 'std::wstring':
             result = ("    auto string = (*env)->NewString(env, &result[0], result.size());\n"
                       "    return string;\n")
         elif returntype.startswith('std::vector'):
@@ -67,7 +70,7 @@ def generateWrapper(filename: str, hFilename: str, content):
         defFunc + 
         "{\n" +
         reference +
-        "    auto result = " + cppFunc +
+        cppFunc +
         release +
         result +
         "}\n"
@@ -80,7 +83,7 @@ def generateWrapper(filename: str, hFilename: str, content):
 def generateCppFile(filename: str, content):
     cppFile = open(f"{filename}.cpp", 'w')
 
-    file = f"#include <Cava/{filename}.h>\n\n"
+    file = f"#include \"Cava/{filename}.h\"\n\n"
 
     for method in content.methods:
         namespace = " "
